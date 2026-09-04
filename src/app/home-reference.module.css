@@ -1,17 +1,19 @@
 .artPage{
+  position:fixed;
+  inset:0;
   width:100vw;
-  height:100svh;
-  min-height:100vh;
+  height:100dvh;
   overflow:hidden;
   background:#020912;
-  display:grid;
-  place-items:center;
+  z-index:2147483000;
+  isolation:isolate;
 }
 
 .artStage{
-  position:relative;
-  width:min(100vw,calc(100svh * 16 / 9));
-  aspect-ratio:16/9;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
   overflow:hidden;
   background:#020912;
 }
@@ -19,10 +21,12 @@
 .heroArtwork{
   position:absolute;
   inset:0;
+  z-index:1;
   width:100%;
   height:100%;
   object-fit:contain;
-  object-position:center;
+  object-position:center center;
+  background:#020912;
   user-select:none;
   -webkit-user-drag:none;
   pointer-events:none;
@@ -30,7 +34,7 @@
 
 .hotspot,.searchHotspot{
   position:absolute;
-  z-index:4;
+  z-index:3;
   display:block;
   border-radius:999px;
 }
@@ -86,6 +90,6 @@
 }
 
 @media(max-width:900px){
-  .artPage{overflow:auto;place-items:start center}
-  .artStage{width:100vw;min-width:760px}
+  .artPage{position:fixed;inset:0;overflow:auto}
+  .artStage{min-width:760px;min-height:428px}
 }
