@@ -1,17 +1,140 @@
 'use client';
+
 import Link from 'next/link';
-import Image from 'next/image';
-import {useEffect,useRef,useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {ArrowRight,Bell,BookOpenText,Calculator,CalendarDays,Camera,Check,Clock3,Filter,Home,Monitor,NotebookPen,Pencil,Play,Search,Sparkles,UserRound,UsersRound,Video,VideoIcon,X} from 'lucide-react';
-import {demoParticipants} from '@/lib/demo/data';
+import {useState} from 'react';
+import {
+  Aperture,
+  ArrowRight,
+  Bell,
+  CalendarDays,
+  Camera,
+  ChevronLeft,
+  ChevronRight,
+  CircleUserRound,
+  FileText,
+  Grid2X2,
+  Layers3,
+  LogIn,
+  Menu,
+  Mic2,
+  NotebookPen,
+  Play,
+  Search,
+  Settings,
+  SlidersHorizontal,
+  Sparkles,
+  Video,
+  VideoIcon,
+  X,
+} from 'lucide-react';
 import styles from './home-reference.module.css';
-const side=[['Início','/',Home],['Reuniões','/reunioes',VideoIcon],['Agenda','/agenda',CalendarDays],['Contatos','/contatos',UserRound],['Gravações','/gravacoes',Play],['Calculadora','/calculadora',Calculator],['Filtros','/filtros',Filter],['Anotar','/anotacoes',NotebookPen],['Lousa','/lousa',Monitor],['Minhas Anotações','/minhas-anotacoes',BookOpenText],['Skill','/skills',Sparkles]] as const;
-const actions=[['Nova reunião','/reuniao-instantanea',Video],['Entrar em reunião','/reunioes?modo=entrar',ArrowRight],['Agendar','/agenda',CalendarDays],['Convidar pessoas','/contatos',UsersRound]] as const;
-const recordings=[['Reunião de alinhamento','29/08/2025 · 58:24'],['Apresentação do projeto','28/08/2025 · 1:12:09']];
-const LOCAL_PROFILE_KEY='octa-profile-local';
-function optimizeAvatar(file:File){return new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(new Error('Falha ao ler imagem'));reader.onload=()=>{const img=new window.Image();img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;const ctx=canvas.getContext('2d');if(!ctx)return reject(new Error('Canvas indisponível'));const scale=Math.max(512/img.width,512/img.height);const w=img.width*scale,h=img.height*scale;ctx.drawImage(img,(512-w)/2,(512-h)/2,w,h);resolve(canvas.toDataURL('image/webp',.78))};img.onerror=()=>reject(new Error('Imagem inválida'));img.src=String(reader.result)};reader.readAsDataURL(file)})}
-export default function HomePage(){const router=useRouter();const[q,setQ]=useState('');const[name,setName]=useState('Sandro');const[headline,setHeadline]=useState('Marketing Digital');const[avatar,setAvatar]=useState(demoParticipants[0]?.avatarUrl||'/octa-hero-reference.webp');const[editingName,setEditingName]=useState(false);const[draftName,setDraftName]=useState('');const[savingProfile,setSavingProfile]=useState(false);const fileRef=useRef<HTMLInputElement>(null);useEffect(()=>{const apply=(p:any)=>{if(p?.displayName||p?.name)setName(p.displayName||p.name);if(p?.headline)setHeadline(p.headline);if(p?.avatarUrl)setAvatar(p.avatarUrl)};try{const local=localStorage.getItem('octa-profile-local');if(local)apply(JSON.parse(local))}catch{}fetch('/api/profile',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>apply(d?.profile)).catch(()=>{});const sync=(e:Event)=>apply((e as CustomEvent).detail);window.addEventListener('octa-profile:updated',sync);return()=>window.removeEventListener('octa-profile:updated',sync)},[]);
- const persistProfile=async(patch:{displayName?:string;avatarUrl?:string})=>{setSavingProfile(true);try{const current=await fetch('/api/profile',{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);const base=current?.profile||{};const payload={displayName:patch.displayName??base.displayName??name,headline:base.headline??headline,company:base.company??'',avatarUrl:patch.avatarUrl??base.avatarUrl??avatar};const saveLocal=()=>{try{localStorage.setItem('octa-profile-local',JSON.stringify(payload))}catch{}setName(payload.displayName);setHeadline(payload.headline);if(payload.avatarUrl)setAvatar(payload.avatarUrl);window.dispatchEvent(new CustomEvent('octa-profile:updated',{detail:payload}));return true};const response=await fetch('/api/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!response.ok){if(response.status===401||response.status===503)return saveLocal();throw new Error('profile')}const data=await response.json().catch(()=>null);const p=data?.profile||payload;try{localStorage.setItem('octa-profile-local',JSON.stringify(p))}catch{}setName(p.displayName||payload.displayName);setHeadline(p.headline||payload.headline);if(p.avatarUrl)setAvatar(p.avatarUrl);window.dispatchEvent(new CustomEvent('octa-profile:updated',{detail:p}));return true}catch{try{const payload={displayName:patch.displayName??name,headline,company:'',avatarUrl:patch.avatarUrl??avatar};localStorage.setItem('octa-profile-local',JSON.stringify(payload));setName(payload.displayName);setHeadline(payload.headline);if(payload.avatarUrl)setAvatar(payload.avatarUrl);window.dispatchEvent(new CustomEvent('octa-profile:updated',{detail:payload}));return true}catch{return false}}finally{setSavingProfile(false)}};
- const beginNameEdit=()=>{setDraftName(name);setEditingName(true)};const saveName=async()=>{const next=draftName.trim();if(!next)return;const ok=await persistProfile({displayName:next});if(ok)setEditingName(false)};const changeAvatar=async(file?:File)=>{if(!file)return;try{const next=await optimizeAvatar(file);setAvatar(next);await persistProfile({avatarUrl:next})}finally{if(fileRef.current)fileRef.current.value=''}};
- const submit=(e:React.FormEvent)=>{e.preventDefault();if(q.trim())router.push(`/reunioes?q=${encodeURIComponent(q.trim())}`)};return <main className={styles.shell}><aside className={styles.sidebar}><Link href="/" className={styles.brand}><span className={styles.logoRing}/>OCTA</Link><div className={styles.profile}><div className={styles.avatar}><Image src={avatar} alt={name} fill sizes="56px" unoptimized={avatar.startsWith('data:')}/><i/><button type="button" aria-label="Alterar foto do perfil" onClick={()=>fileRef.current?.click()} disabled={savingProfile} style={{position:'absolute',right:-7,top:-7,zIndex:4,width:24,height:24,borderRadius:'50%',display:'grid',placeItems:'center',border:'1px solid rgba(255,255,255,.22)',background:'rgba(22,27,31,.88)',backdropFilter:'blur(12px)',color:'#fff',boxShadow:'0 4px 12px rgba(0,0,0,.28)'}}><Camera size={12}/></button><input ref={fileRef} type="file" accept="image/*" hidden onChange={e=>changeAvatar(e.target.files?.[0])}/></div><div style={{minWidth:0,flex:1}}>{editingName?<div style={{display:'flex',alignItems:'center',gap:5}}><input autoFocus value={draftName} onChange={e=>setDraftName(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')saveName();if(e.key==='Escape')setEditingName(false)}} maxLength={120} style={{width:104,height:28,borderRadius:9,border:'1px solid rgba(255,255,255,.2)',background:'rgba(255,255,255,.08)',color:'#fff',padding:'0 8px',outline:'none',fontSize:13}}/><button type="button" onClick={saveName} disabled={savingProfile} aria-label="Salvar nome" style={{display:'grid',placeItems:'center',width:23,height:23,border:0,borderRadius:'50%',background:'rgba(255,255,255,.12)',color:'#fff'}}><Check size={12}/></button><button type="button" onClick={()=>setEditingName(false)} aria-label="Cancelar edição" style={{display:'grid',placeItems:'center',width:23,height:23,border:0,borderRadius:'50%',background:'transparent',color:'rgba(255,255,255,.65)'}}><X size={12}/></button></div>:<div style={{display:'flex',alignItems:'center',gap:7}}><strong>{name}</strong><button type="button" aria-label="Editar nome" onClick={beginNameEdit} style={{display:'grid',placeItems:'center',width:23,height:23,border:0,borderRadius:'50%',background:'rgba(255,255,255,.07)',color:'rgba(255,255,255,.72)'}}><Pencil size={11}/></button></div>}<span>{headline}</span></div></div><div className={styles.performance}><div><span>Performance do skills</span><b>82/100</b></div><i><em/></i></div><nav>{side.map(([label,href,Icon])=><Link key={label} href={href} className={label==='Início'?styles.active:''}><Icon size={20}/><span>{label}</span></Link>)}</nav><Link href="/planos" className={styles.plan}><span>◇</span><div><b>Plano Pro</b><small>Renova em 12 dias</small></div><ArrowRight size={16}/></Link></aside><section className={styles.workspace}><header className={styles.topbar}><form onSubmit={submit} className={styles.search}><Search size={18}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar reunião, pessoa ou gravação"/></form><nav><Link className={styles.topActive} href="/">Início</Link><Link href="/reunioes">Reuniões</Link><Link href="/agenda">Agenda</Link><Link href="/planos">Planos e preços</Link></nav><button aria-label="Notificações"><Bell size={20}/></button></header><div className={styles.heroPhoto}/><div className={styles.heroShade}/><section className={styles.heroCopy}><h1>Bom dia, <b>{name}</b></h1><p>Organize suas reuniões, conecte-se<br/>e aumente sua produtividade.</p><Link href="/reuniao-instantanea" className={styles.create}>Criar reunião <span><Video size={18}/></span></Link></section><div className={styles.actions}>{actions.map(([label,href,Icon])=><Link key={label} href={href}><span><Icon size={21}/></span><b>{label}</b></Link>)}</div><section className={styles.bottomCards}><article className={styles.glass}><small>PRÓXIMA REUNIÃO</small><div className={styles.nextMeeting}><div className={styles.date}><span>Hoje</span><b>30</b><small>AGO</small></div><div><h3>Reunião de planejamento</h3><p><Clock3 size={13}/>14:00 - 15:00</p><p><UsersRound size={13}/>6 participantes</p><Link href="/reunioes">Entrar em reunião <ArrowRight size={14}/></Link></div></div></article><article className={styles.glass}><header><small>GRAVAÇÕES RECENTES</small><Link href="/gravacoes">Ver todas</Link></header>{recordings.map((r,i)=><div className={styles.recording} key={r[0]}><div className={styles.thumb}><Image src={i?demoParticipants[2].avatarUrl!:demoParticipants[1].avatarUrl!} alt="" fill sizes="88px"/><Play size={15} fill="currentColor"/></div><div><b>{r[0]}</b><span>{r[1]}</span></div><button>•••</button></div>)}</article></section><aside className={styles.rightRail}><article className={styles.glass}><header><small>SKILLS</small><button>•••</button></header><p>Performance geral</p><div className={styles.score}><b>82</b><span>/100</span><div className={styles.sparkline}>⌁⌁⌁</div><em>+6,4%</em></div><p className={styles.analyzed}>8 reuniões analisadas</p><div className={styles.progressBars}><i/><i/><i/><i/></div><div className={styles.goal}>91% da meta</div><Link href="/skills">Ver insights <ArrowRight size={17}/></Link></article><article className={styles.glass}><small>SUAS GRAVAÇÕES</small><div className={styles.audio}><span><Play size={16} fill="currentColor"/></span><div className={styles.wave}>|||||||||||||||||||</div><b>32:46</b></div><h3>Apresentação produto</h3><p>Ontem, 16:30</p><Link href="/gravacoes">Ver todas <ArrowRight size={17}/></Link></article><article className={`${styles.glass} ${styles.aiCard}`}><div><small>✦ &nbsp; OCTA AI</small><h3>Olá, {name}!</h3><p>Posso te ajudar com resumos,<br/>insights e muito mais.</p><Link href="/chat">Abrir chat <ArrowRight size={15}/></Link></div><div className={styles.aiSphere}/></article></aside><Link href="/chat" className={styles.aiBar}><span className={styles.aiRing}/><div><b>OCTA AI <em>BETA</em></b><small>Olá, {name}! Como posso te ajudar hoje?</small></div><div className={styles.composer}>Digite sua mensagem...<span><ArrowRight size={19}/></span></div></Link></section></main>}
+
+const menuItems = [
+  {label:'Início', href:'/', icon:Grid2X2},
+  {label:'Criar reunião', href:'/reuniao-instantanea', icon:VideoIcon},
+  {label:'Agenda', href:'/agenda', icon:CalendarDays},
+  {label:'Performance', href:'/skills', icon:Sparkles},
+  {label:'Contatos', href:'/contatos', icon:CircleUserRound},
+  {label:'Notificações', href:'/configuracoes', icon:Bell},
+  {label:'Configurações', href:'/configuracoes', icon:Settings},
+];
+
+const quickLinks = [
+  {label:'Minhas\nanotações', href:'/minhas-anotacoes', icon:FileText},
+  {label:'Criar slides', href:'/criar-slides', icon:Video},
+  {label:'Gravações\nrecentes', href:'/gravacoes', icon:Play},
+  {label:'Criar\nreunião', href:'/reuniao-instantanea', icon:Camera},
+];
+
+const featureCards = [
+  {title:'Leve &\nportátil', text:'Compacto e resistente\npara qualquer cenário.', icon:Mic2, art:'feather'},
+  {title:'Otimização\nde vídeo', text:'Imagens mais nítidas\ncom menos esforço.', icon:VideoIcon, art:'lens'},
+  {title:'Abertura\nlinear', text:'Controle preciso\nde luz para cada\ndetalhe.', icon:Aperture, art:'aperture'},
+  {title:'Revestimento\nmulticamadas', text:'Menos reflexos,\nmais fidelidade\nde cor.', icon:Layers3, art:'purple'},
+  {title:'Autofoco rápido\ne silencioso', text:'Precisão instantânea\ncom operação\nultrassilenciosa.', icon:SlidersHorizontal, art:'focus'},
+  {title:'Retratos com\nexcelência', text:'Tecnologia que valoriza\ncada expressão\ne detalhe.', icon:CircleUserRound, art:'portrait'},
+];
+
+export default function HomePage(){
+  const router = useRouter();
+  const [expanded,setExpanded] = useState(false);
+  const [q,setQ] = useState('');
+
+  const submit = (e:React.FormEvent)=>{
+    e.preventDefault();
+    if(q.trim()) router.push(`/reunioes?q=${encodeURIComponent(q.trim())}`);
+  };
+
+  return (
+    <main className={styles.page}>
+      <aside className={`${styles.sidebar} ${expanded ? styles.sidebarExpanded : ''}`}>
+        <button className={styles.expandToggle} onClick={()=>setExpanded(v=>!v)} aria-label={expanded?'Recolher menu':'Expandir menu'}>
+          {expanded?<ChevronLeft size={16}/>:<ChevronRight size={16}/>} 
+        </button>
+        <Link href="/profile" className={styles.avatar} aria-label="Perfil">
+          <span className={styles.avatarFace}>S</span>
+        </Link>
+        <nav className={styles.sideNav}>
+          {menuItems.map(({label,href,icon:Icon},i)=>(
+            <Link key={label} href={href} className={`${styles.sideItem} ${i===1?styles.primarySide:''}`} title={label}>
+              <Icon size={22} strokeWidth={1.55}/><span>{label}</span>
+            </Link>
+          ))}
+        </nav>
+        <div className={styles.sideBottom}>
+          <Link href="/login" className={styles.sideItem} title="Sair"><LogIn size={22} strokeWidth={1.55}/><span>Sair</span></Link>
+        </div>
+      </aside>
+
+      <section className={styles.canvas}>
+        <header className={styles.topbar}>
+          <Link href="/" className={styles.brand}>ZYVO</Link>
+          <form className={styles.search} onSubmit={submit}>
+            <Search size={17} strokeWidth={1.5}/>
+            <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar reuniões, pessoas ou gravações"/>
+          </form>
+          <nav className={styles.topnav}>
+            <Link href="/reunioes">Recursos</Link>
+            <Link href="/skills">Tecnologia</Link>
+            <Link href="/skills">Performance</Link>
+            <Link href="/profile">Sobre nós</Link>
+          </nav>
+          <Link href="/login" className={styles.access}>Acessar <ArrowRight size={17}/></Link>
+        </header>
+
+        <section className={styles.heroArea}>
+          <div className={styles.heroCopy}>
+            <p className={styles.eyebrow}>TECNOLOGIA QUE TRANSFORMA</p>
+            <h1>Reuniões com<br/><span>Performance Pro</span></h1>
+            <p className={styles.subcopy}>Ferramentas inteligentes para reuniões mais<br/>produtivas, análises precisas e resultados<br/>que fazem a diferença.</p>
+            <div className={styles.heroActions}>
+              <Link href="/reuniao-instantanea" className={styles.createButton}><VideoIcon size={18}/>Criar reunião<span>+</span></Link>
+              <Link href="/gravacoes" className={styles.watchButton}><span><Play size={14} fill="currentColor"/></span>Assistir gravação</Link>
+            </div>
+            <div className={styles.quickRow}>
+              {quickLinks.map(({label,href,icon:Icon})=>(
+                <Link key={label} href={href} className={styles.quickItem}>
+                  <Icon size={28} strokeWidth={1.35}/>
+                  <span>{label.split('\n').map((line,idx)=><span key={idx}>{line}</span>)}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.cardGrid}>
+            {featureCards.map(({title,text,icon:Icon,art})=>(
+              <article key={title} className={`${styles.featureCard} ${styles[`art_${art}`]}`}>
+                <Icon className={styles.cardIcon} size={31} strokeWidth={1.25}/>
+                <h2>{title.split('\n').map((line,idx)=><span key={idx}>{line}</span>)}</h2>
+                <div className={styles.cardRule}/>
+                <p>{text.split('\n').map((line,idx)=><span key={idx}>{line}</span>)}</p>
+                <div className={styles.artShape}/>
+              </article>
+            ))}
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+}
