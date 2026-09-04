@@ -5,7 +5,7 @@
   height:100dvh;
   overflow:hidden;
   background:#020912;
-  z-index:2147483000;
+  z-index:2147483646;
   isolation:isolate;
   display:grid;
   place-items:center;
@@ -13,9 +13,9 @@
 
 .artStage{
   position:relative;
-  width:min(100vw,calc(100dvh * 16 / 9));
-  height:min(100dvh,calc(100vw * 9 / 16));
-  aspect-ratio:16/9;
+  width:min(100vw,calc(100dvh * 1672 / 941));
+  height:min(100dvh,calc(100vw * 941 / 1672));
+  aspect-ratio:1672/941;
   overflow:hidden;
   background:#020912;
   flex:0 0 auto;
@@ -27,7 +27,7 @@
   z-index:1;
   width:100%;
   height:100%;
-  object-fit:fill;
+  object-fit:contain;
   object-position:center center;
   background:#020912;
   user-select:none;
@@ -146,7 +146,7 @@
     width:100vw;
     height:auto;
     min-width:760px;
-    min-height:427.5px;
-    aspect-ratio:16/9;
+    min-height:427.65px;
+    aspect-ratio:1672/941;
   }
 }
