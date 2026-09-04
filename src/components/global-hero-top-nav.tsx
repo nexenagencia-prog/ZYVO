@@ -1,0 +1,59 @@
+'use client';
+// deploy-sync: 2026-09-03T23:00-03:00
+import Link from 'next/link';
+import {usePathname,useRouter} from 'next/navigation';
+import {Bell,Search} from 'lucide-react';
+import {useState} from 'react';
+
+const items=[
+  {href:'/',label:'Início'},
+  {href:'/reunioes',label:'Reuniões'},
+  {href:'/agenda',label:'Agenda'},
+  {href:'/planos',label:'Planos e preços'},
+];
+
+const hiddenPrefixes=['/login','/reset-password','/auth/','/admin','/room/','/reuniao-instantanea'];
+
+export function GlobalHeroTopNav(){
+  const path=usePathname();
+  const router=useRouter();
+  const[query,setQuery]=useState('');
+  if(path==='/'||hiddenPrefixes.some(prefix=>path===prefix||path.startsWith(prefix)))return null;
+  const submit=(event:React.FormEvent)=>{event.preventDefault();const value=query.trim();if(value)router.push(`/reunioes?q=${encodeURIComponent(value)}`)};
+  return <>
+    <header className="global-hero-topnav" aria-label="Navegação principal OCTA">
+      <form className="global-hero-search" onSubmit={submit}>
+        <Search size={18}/>
+        <input value={query} onChange={event=>setQuery(event.target.value)} aria-label="Buscar" placeholder="Buscar reunião, pessoa ou gravação"/>
+      </form>
+      <nav className="global-hero-links" aria-label="Seções principais">
+        {items.map(item=><Link key={item.href} href={item.href} className={path===item.href?'is-active':''}>{item.label}</Link>)}
+      </nav>
+      <button className="global-hero-bell" type="button" aria-label="Notificações"><Bell size={20}/></button>
+    </header>
+    <style jsx global>{`
+      .global-hero-topnav{position:fixed;left:250px;right:0;top:0;z-index:59;height:76px;display:flex;align-items:center;gap:24px;padding:0 28px;color:#fff;background:none!important;background-color:transparent!important;background-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:0!important;box-shadow:none!important}
+      .global-hero-search{width:370px;height:46px;display:flex;align-items:center;gap:11px;padding:0 16px;border:1px solid rgba(255,255,255,.17);border-radius:24px;background:rgba(18,22,25,.18);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:none;-webkit-backdrop-filter:none}
+      .global-hero-search input{min-width:0;width:100%;border:0;outline:0;background:transparent;color:#fff;font-size:12px;font-weight:400;letter-spacing:0}
+      .global-hero-search input::placeholder{color:rgba(255,255,255,.65)}
+      .global-hero-links{margin-left:auto;display:flex;align-items:center;gap:36px;height:100%}
+      .global-hero-links a{position:relative;display:flex;height:100%;align-items:center;color:rgba(255,255,255,.84);font-size:13px;font-weight:400;white-space:nowrap;transition:color .18s ease}
+      .global-hero-links a:hover,.global-hero-links a.is-active{color:#fff}
+      .global-hero-links a.is-active:after{content:'';position:absolute;left:50%;bottom:14px;width:4px;height:4px;border-radius:50%;background:#fff;transform:translateX(-50%)}
+      .global-hero-bell{display:grid;width:38px;height:38px;place-items:center;border:0;background:transparent;color:#fff}
+      body:has(.global-hero-topnav) .octa-topbar{visibility:hidden!important;pointer-events:none!important}
+      body:has(.global-hero-topnav) .agenda-reference-top{display:none!important}
+      body:has(.global-hero-topnav) .notes-ref-top{display:none!important}
+      body:has(.global-hero-topnav) .agenda-reference-action{margin-top:76px!important;height:66px!important}
+      body:has(.global-hero-topnav) .agenda-reference-grid{height:calc(100dvh - 142px)!important}
+      body:has(.global-hero-topnav) .notes-ref-main{height:calc(100dvh - 76px)!important;padding-top:94px!important}
+      body:has(.reunioes-home-surface) .octa-page{background-image:linear-gradient(rgba(8,10,12,.28),rgba(8,10,12,.42)),url('/reunioes-bg.webp')!important;background-size:cover!important;background-position:center!important;background-attachment:fixed!important}
+      body:has(.reunioes-home-surface) .octa-main,body:has(.reunioes-home-surface) .octa-app-body,body:has(.reunioes-home-surface) .octa-inner-page{background:transparent!important}
+      body:has(.reunioes-home-surface) .octa-page:before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+      body:has(.reunioes-home-surface) .octa-main{position:relative;z-index:1}
+      @media(max-width:1279px){.global-hero-topnav{left:0;height:70px;padding:0 18px;gap:14px}.global-hero-search{width:min(360px,42vw);height:42px}.global-hero-links{gap:20px}.global-hero-links a{font-size:13px}body:has(.global-hero-topnav) .agenda-reference-action{margin-top:70px!important}body:has(.global-hero-topnav) .agenda-reference-grid{height:calc(100dvh - 136px)!important}body:has(.global-hero-topnav) .notes-ref-main{height:calc(100dvh - 70px)!important;padding-top:88px!important}}
+      @media(max-width:900px){.global-hero-links{display:none}.global-hero-search{width:min(520px,calc(100vw - 76px))}.global-hero-bell{margin-left:auto}}
+      @media(max-width:700px){.global-hero-topnav{height:64px;padding:0 12px}.global-hero-search{height:40px;padding:0 14px}.global-hero-bell{width:36px;height:36px}body:has(.global-hero-topnav) .agenda-reference-action{margin-top:64px!important}body:has(.global-hero-topnav) .agenda-reference-grid{height:calc(100dvh - 130px)!important}body:has(.global-hero-topnav) .notes-ref-main{height:calc(100dvh - 64px)!important;padding-top:82px!important}}
+    `}</style>
+  </>;
+}
