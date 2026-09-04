@@ -55,7 +55,7 @@ export default function HomePage(){
       <div className={styles.artStage} aria-label="ZYVO — Reuniões com Performance Pro">
         <img
           className={styles.heroArtwork}
-          src="/zyvo-hero-reference.webp"
+          src="/zyvo-hero-reference.webp?v=20260904-1313"
           alt="ZYVO — Reuniões com Performance Pro"
           width={1672}
           height={941}
