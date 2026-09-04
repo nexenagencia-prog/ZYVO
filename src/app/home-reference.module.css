@@ -10,9 +10,8 @@
 
 .artStage{
   position:relative;
-  width:100vw;
-  height:100svh;
-  min-height:100vh;
+  width:min(100vw,calc(100svh * 16 / 9));
+  aspect-ratio:16/9;
   overflow:hidden;
   background:#020912;
 }
@@ -22,14 +21,14 @@
   inset:0;
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
   object-position:center;
   user-select:none;
   -webkit-user-drag:none;
+  pointer-events:none;
 }
 
-.hotspot,
-.searchHotspot{
+.hotspot,.searchHotspot{
   position:absolute;
   z-index:4;
   display:block;
@@ -38,82 +37,55 @@
 
 .hotspot{
   outline:none;
-  transition:background .18s ease, box-shadow .18s ease;
-}
-
-.hotspot:hover,
-.hotspot:focus-visible{
-  background:rgba(255,255,255,.045);
-  box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 10px 35px rgba(70,135,205,.08);
-}
-
-.searchHotspot{
-  left:15.9%;
-  top:3.35%;
-  width:23.8%;
-  height:5.8%;
-}
-
-.searchHotspot input{
-  width:100%;
-  height:100%;
-  padding:0 4.2%;
-  border:0;
-  outline:0;
-  border-radius:999px;
-  color:transparent;
-  caret-color:#fff;
   background:transparent;
-  font-size:14px;
+  transition:background .15s ease,box-shadow .15s ease;
 }
 
-.searchHotspot input:focus{
-  background:rgba(255,255,255,.025);
+.hotspot:hover,.hotspot:focus-visible{
+  background:rgba(255,255,255,.035);
   box-shadow:0 0 0 1px rgba(255,255,255,.08);
 }
 
-.navHome{left:58.8%;top:3.1%;width:4.9%;height:6.7%}
-.navSkills{left:64.5%;top:3.1%;width:4.6%;height:6.7%}
-.navAgenda{left:69.2%;top:3.1%;width:5.1%;height:6.7%}
-.navPlans{left:74.5%;top:3.1%;width:9.2%;height:6.7%}
-.navAccess{left:88.0%;top:2.6%;width:9.7%;height:7.6%}
+.brandHotspot{left:7.1%;top:3.5%;width:8.1%;height:5.8%;border-radius:10px}
+.profileHotspot{left:.6%;top:3.0%;width:3.8%;height:7.2%;border-radius:50%}
 
-.createMeeting{left:7.5%;top:65.0%;width:13.0%;height:7.2%}
-.enterMeeting{left:21.1%;top:65.0%;width:8.3%;height:7.2%}
+.searchHotspot{left:16.5%;top:3.0%;width:25.4%;height:6.2%}
+.searchHotspot input{
+  width:100%;height:100%;padding:0 7%;border:0;outline:0;border-radius:999px;
+  color:rgba(255,255,255,.96);caret-color:#fff;background:transparent;font-size:clamp(9px,.78vw,14px);
+}
+.searchHotspot input::placeholder{color:transparent}
+.searchHotspot input:focus{background:rgba(6,14,24,.32);box-shadow:0 0 0 1px rgba(255,255,255,.09)}
 
-.quickNotes{left:7.1%;top:80.2%;width:6.6%;height:10.2%;border-radius:18px}
-.quickSlides{left:14.6%;top:80.2%;width:6.3%;height:10.2%;border-radius:18px}
-.quickRecordings{left:22.1%;top:80.2%;width:7.5%;height:10.2%;border-radius:18px}
-.quickMeeting{left:30.2%;top:80.2%;width:6.5%;height:10.2%;border-radius:18px}
+.navHome{left:61.2%;top:3.2%;width:4.3%;height:6.3%}
+.navSkills{left:66.1%;top:3.2%;width:4.0%;height:6.3%}
+.navAgenda{left:71.1%;top:3.2%;width:4.8%;height:6.3%}
+.navPlans{left:76.8%;top:3.2%;width:8.1%;height:6.3%}
+.navAccess{left:86.6%;top:3.0%;width:9.8%;height:6.8%}
 
-.sideMeeting{left:.55%;top:23.0%;width:4.0%;height:6.4%}
-.sideAgenda{left:.55%;top:31.7%;width:4.0%;height:6.4%}
-.sideContacts{left:.55%;top:39.8%;width:4.0%;height:6.4%}
-.sideNotes{left:.55%;top:47.8%;width:4.0%;height:6.4%}
-.sideSettings{left:.55%;top:55.8%;width:4.0%;height:6.4%}
+.createMeeting{left:8.0%;top:62.0%;width:13.4%;height:6.9%}
+.enterMeeting{left:22.4%;top:62.0%;width:9.3%;height:6.9%}
+
+.quickNotes{left:8.0%;top:76.9%;width:6.3%;height:9.4%;border-radius:16px}
+.quickSlides{left:14.4%;top:76.9%;width:8.0%;height:9.4%;border-radius:16px}
+.quickRecordings{left:22.4%;top:76.9%;width:8.5%;height:9.4%;border-radius:16px}
+.quickMeeting{left:31.0%;top:76.9%;width:6.3%;height:9.4%;border-radius:16px}
+
+.sideHome{left:.55%;top:14.6%;width:3.8%;height:7.7%;border-radius:50%}
+.sideMeeting{left:.55%;top:23.0%;width:3.8%;height:6.5%;border-radius:14px}
+.sideAgenda{left:.55%;top:30.3%;width:3.8%;height:6.5%;border-radius:14px}
+.sideContacts{left:.55%;top:37.5%;width:3.8%;height:6.5%;border-radius:14px}
+.sideNotes{left:.55%;top:44.7%;width:3.8%;height:6.5%;border-radius:14px}
+.sideSettings{left:.55%;top:51.9%;width:3.8%;height:6.5%;border-radius:14px}
+.sideNotifications{left:.55%;top:59.0%;width:3.8%;height:6.5%;border-radius:14px}
+.sideMenu{left:.55%;top:87.0%;width:3.8%;height:7.0%;border-radius:14px}
 
 .srOnly{
-  position:absolute!important;
-  width:1px!important;
-  height:1px!important;
-  padding:0!important;
-  margin:-1px!important;
-  overflow:hidden!important;
-  clip:rect(0,0,0,0)!important;
-  white-space:nowrap!important;
-  border:0!important;
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
 }
 
-@media (max-aspect-ratio:16/10){
-  .artStage{
-    width:min(100vw, calc(100svh * 16 / 9));
-    height:min(100svh, calc(100vw * 9 / 16));
-    min-height:0;
-    box-shadow:0 0 80px rgba(0,0,0,.6);
-  }
-}
-
-@media (max-width:900px){
-  .artPage{overflow:auto;align-items:start;justify-items:start}
-  .artStage{width:1600px;height:900px;min-height:900px;transform-origin:top left}
+@media(max-width:900px){
+  .artPage{overflow:auto;place-items:start center}
+  .artStage{width:100vw;min-width:760px}
 }
