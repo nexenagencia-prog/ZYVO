@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
-import {useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {
   Aperture,
   ArrowRight,
@@ -55,15 +55,47 @@ const featureCards = [
 
 export default function HomePage(){
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [expanded,setExpanded] = useState(false);
   const [q,setQ] = useState('');
+  const [userName,setUserName] = useState('Sandro');
+  const [avatar,setAvatar] = useState('');
+
+  useEffect(()=>{
+    const savedName = window.localStorage.getItem('zyvo-user-name');
+    const savedAvatar = window.localStorage.getItem('zyvo-user-avatar');
+    if(savedName?.trim()) setUserName(savedName);
+    if(savedAvatar) setAvatar(savedAvatar);
+  },[]);
 
   const toggleMenu = ()=>setExpanded(v=>!v);
+
+  const updateName = (value:string)=>{
+    setUserName(value);
+    if(value.trim()) window.localStorage.setItem('zyvo-user-name',value.trim());
+  };
+
+  const chooseAvatar = ()=>fileInputRef.current?.click();
+
+  const uploadAvatar = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    const file = e.target.files?.[0];
+    if(!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      if(typeof reader.result !== 'string') return;
+      setAvatar(reader.result);
+      try{ window.localStorage.setItem('zyvo-user-avatar',reader.result); }catch{}
+    };
+    reader.readAsDataURL(file);
+    e.target.value='';
+  };
 
   const submit = (e:React.FormEvent)=>{
     e.preventDefault();
     if(q.trim()) router.push(`/reunioes?q=${encodeURIComponent(q.trim())}`);
   };
+
+  const displayName = userName.trim() || 'Sandro';
 
   return (
     <main className={styles.page}>
@@ -71,9 +103,18 @@ export default function HomePage(){
         <button type="button" className={styles.expandToggle} onClick={toggleMenu} aria-label={expanded?'Recolher menu':'Expandir menu'} aria-expanded={expanded}>
           {expanded?<ChevronLeft size={16}/>:<ChevronRight size={16}/>} 
         </button>
-        <Link href="/profile" className={styles.avatar} aria-label="Perfil">
-          <span className={styles.avatarFace}>S</span>
-        </Link>
+
+        <div className={styles.profileHeader}>
+          <button type="button" className={styles.avatar} onClick={chooseAvatar} aria-label="Alterar foto do perfil" title="Alterar foto do perfil">
+            <span className={styles.avatarFace} style={avatar?{backgroundImage:`url(${avatar})`}:undefined}>{avatar?'':displayName.charAt(0).toUpperCase()}</span>
+          </button>
+          <div className={styles.profileEditor}>
+            <input className={styles.profileNameInput} value={userName} onChange={e=>updateName(e.target.value)} onBlur={()=>{if(!userName.trim()) updateName('Sandro')}} aria-label="Nome do usuário" />
+            <button type="button" className={styles.changePhoto} onClick={chooseAvatar}>Trocar foto</button>
+          </div>
+          <input ref={fileInputRef} className={styles.hiddenFile} type="file" accept="image/*" onChange={uploadAvatar}/>
+        </div>
+
         <nav className={styles.sideNav}>
           {menuItems.map(({label,href,icon:Icon},i)=>(
             <Link key={label} href={href} className={`${styles.sideItem} ${i===1?styles.primarySide:''}`} title={label}>
@@ -106,6 +147,7 @@ export default function HomePage(){
 
         <section className={styles.heroArea}>
           <div className={styles.heroCopy}>
+            <p className={styles.greeting}>Bem-vindo, <strong>{displayName}</strong></p>
             <p className={styles.eyebrow}>TECNOLOGIA QUE TRANSFORMA</p>
             <h1>Reuniões com<br/><span>Performance Pro</span></h1>
             <p className={styles.subcopy}>Ferramentas inteligentes para reuniões mais<br/>produtivas, análises precisas e resultados<br/>que fazem a diferença.</p>
