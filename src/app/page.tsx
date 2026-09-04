@@ -2,45 +2,50 @@
 
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
-import {FormEvent, useState} from 'react';
+import {FormEvent,useState} from 'react';
 import styles from './home-reference.module.css';
 
-const hotspots = [
-  {label:'Início', href:'/', cls:'navHome'},
-  {label:'Skills', href:'/skills', cls:'navSkills'},
-  {label:'Agenda', href:'/agenda', cls:'navAgenda'},
-  {label:'Planos e Preços', href:'/planos', cls:'navPlans'},
-  {label:'Acessar', href:'/login', cls:'navAccess'},
-  {label:'Criar reunião', href:'/reuniao-instantanea', cls:'createMeeting'},
-  {label:'Entrar', href:'/reunioes', cls:'enterMeeting'},
-  {label:'Minhas anotações', href:'/minhas-anotacoes', cls:'quickNotes'},
-  {label:'Criar slides', href:'/criar-slides', cls:'quickSlides'},
-  {label:'Gravações recentes', href:'/gravacoes', cls:'quickRecordings'},
-  {label:'Criar reunião', href:'/reuniao-instantanea', cls:'quickMeeting'},
-  {label:'Criar reunião', href:'/reuniao-instantanea', cls:'sideMeeting'},
-  {label:'Agenda', href:'/agenda', cls:'sideAgenda'},
-  {label:'Contatos', href:'/contatos', cls:'sideContacts'},
-  {label:'Anotações', href:'/minhas-anotacoes', cls:'sideNotes'},
-  {label:'Configurações', href:'/configuracoes', cls:'sideSettings'},
+const hotspots=[
+  {label:'ZYVO',href:'/',cls:'brandHotspot'},
+  {label:'Perfil',href:'/configuracoes',cls:'profileHotspot'},
+  {label:'Início',href:'/',cls:'navHome'},
+  {label:'Skills',href:'/skills',cls:'navSkills'},
+  {label:'Agenda',href:'/agenda',cls:'navAgenda'},
+  {label:'Planos e Preços',href:'/planos',cls:'navPlans'},
+  {label:'Acessar',href:'/login',cls:'navAccess'},
+  {label:'Criar reunião',href:'/reuniao-instantanea',cls:'createMeeting'},
+  {label:'Entrar',href:'/reunioes',cls:'enterMeeting'},
+  {label:'Minhas anotações',href:'/minhas-anotacoes',cls:'quickNotes'},
+  {label:'Criar slides',href:'/criar-slides',cls:'quickSlides'},
+  {label:'Gravações recentes',href:'/gravacoes',cls:'quickRecordings'},
+  {label:'Criar reunião',href:'/reuniao-instantanea',cls:'quickMeeting'},
+  {label:'Início',href:'/',cls:'sideHome'},
+  {label:'Criar reunião',href:'/reuniao-instantanea',cls:'sideMeeting'},
+  {label:'Agenda',href:'/agenda',cls:'sideAgenda'},
+  {label:'Contatos',href:'/contatos',cls:'sideContacts'},
+  {label:'Anotações',href:'/minhas-anotacoes',cls:'sideNotes'},
+  {label:'Configurações',href:'/configuracoes',cls:'sideSettings'},
+  {label:'Notificações',href:'/configuracoes',cls:'sideNotifications'},
+  {label:'Menu',href:'/configuracoes',cls:'sideMenu'},
 ];
 
 export default function HomePage(){
-  const router = useRouter();
-  const [query,setQuery] = useState('');
+  const router=useRouter();
+  const [query,setQuery]=useState('');
 
-  const submitSearch = (event:FormEvent<HTMLFormElement>)=>{
+  const submitSearch=(event:FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
-    const value = query.trim();
+    const value=query.trim();
     if(value) router.push(`/reunioes?q=${encodeURIComponent(value)}`);
   };
 
-  return (
+  return(
     <main className={styles.artPage}>
       <div className={styles.artStage} aria-label="ZYVO — Reuniões com Performance Pro">
         <img
           className={styles.heroArtwork}
           src="/zyvo-hero-final-1920x1080.jpg"
-          alt="ZYVO — interface de reuniões com Performance Pro e análise facial"
+          alt="ZYVO — Reuniões com Performance Pro"
           width={1920}
           height={1080}
           draggable={false}
@@ -55,6 +60,7 @@ export default function HomePage(){
             value={query}
             onChange={event=>setQuery(event.target.value)}
             aria-label="Buscar reuniões, pessoas ou gravações"
+            autoComplete="off"
           />
         </form>
 
