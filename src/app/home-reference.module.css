@@ -7,15 +7,18 @@
   background:#020912;
   z-index:2147483000;
   isolation:isolate;
+  display:grid;
+  place-items:center;
 }
 
 .artStage{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
+  position:relative;
+  width:min(100vw,calc(100dvh * 16 / 9));
+  height:min(100dvh,calc(100vw * 9 / 16));
+  aspect-ratio:16/9;
   overflow:hidden;
   background:#020912;
+  flex:0 0 auto;
 }
 
 .heroArtwork{
@@ -24,7 +27,7 @@
   z-index:1;
   width:100%;
   height:100%;
-  object-fit:contain;
+  object-fit:fill;
   object-position:center center;
   background:#020912;
   user-select:none;
@@ -41,7 +44,10 @@
 
 .hotspot{
   outline:none;
+  border:0;
+  padding:0;
   background:transparent;
+  cursor:pointer;
   transition:background .15s ease,box-shadow .15s ease;
 }
 
@@ -55,11 +61,20 @@
 
 .searchHotspot{left:16.5%;top:3.0%;width:25.4%;height:6.2%}
 .searchHotspot input{
-  width:100%;height:100%;padding:0 7%;border:0;outline:0;border-radius:999px;
-  color:rgba(255,255,255,.96);caret-color:#fff;background:transparent;font-size:clamp(9px,.78vw,14px);
+  width:100%;
+  height:100%;
+  padding:0 7%;
+  border:0;
+  outline:0;
+  border-radius:999px;
+  color:rgba(255,255,255,.96);
+  caret-color:#fff;
+  background:transparent;
+  font-size:clamp(9px,.78vw,14px);
+  box-sizing:border-box;
 }
 .searchHotspot input::placeholder{color:transparent}
-.searchHotspot input:focus{background:rgba(6,14,24,.32);box-shadow:0 0 0 1px rgba(255,255,255,.09)}
+.searchHotspot input:focus{background:rgba(6,14,24,.72);box-shadow:0 0 0 1px rgba(255,255,255,.09)}
 
 .navHome{left:61.2%;top:3.2%;width:4.3%;height:6.3%}
 .navSkills{left:66.1%;top:3.2%;width:4.0%;height:6.3%}
@@ -84,12 +99,54 @@
 .sideNotifications{left:.55%;top:59.0%;width:3.8%;height:6.5%;border-radius:14px}
 .sideMenu{left:.55%;top:87.0%;width:3.8%;height:7.0%;border-radius:14px}
 
+.expandedMenu{
+  position:absolute;
+  z-index:8;
+  left:4.7%;
+  bottom:4.7%;
+  width:220px;
+  padding:18px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:22px;
+  background:rgba(6,14,24,.92);
+  backdrop-filter:blur(18px);
+  box-shadow:0 22px 60px rgba(0,0,0,.38);
+}
+.expandedMenuTitle{font-size:14px;letter-spacing:.28em;color:#fff;margin:2px 0 12px 4px}
+.expandedMenu nav{display:flex;flex-direction:column;gap:4px}
+.expandedMenu nav a{
+  color:rgba(255,255,255,.84);
+  font-size:13px;
+  font-weight:390;
+  padding:10px 12px;
+  border-radius:12px;
+}
+.expandedMenu nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+
 .srOnly{
-  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
-  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important;
 }
 
 @media(max-width:900px){
-  .artPage{position:fixed;inset:0;overflow:auto}
-  .artStage{min-width:760px;min-height:428px}
+  .artPage{
+    position:fixed;
+    inset:0;
+    overflow:auto;
+    display:block;
+  }
+  .artStage{
+    width:100vw;
+    height:auto;
+    min-width:760px;
+    min-height:427.5px;
+    aspect-ratio:16/9;
+  }
 }
