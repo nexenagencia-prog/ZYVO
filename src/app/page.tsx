@@ -15,10 +15,8 @@ import {
   FileText,
   Grid2X2,
   Layers3,
-  LogIn,
   Menu,
   Mic2,
-  NotebookPen,
   Play,
   Search,
   Settings,
@@ -26,7 +24,6 @@ import {
   Sparkles,
   Video,
   VideoIcon,
-  X,
 } from 'lucide-react';
 import styles from './home-reference.module.css';
 
@@ -61,6 +58,8 @@ export default function HomePage(){
   const [expanded,setExpanded] = useState(false);
   const [q,setQ] = useState('');
 
+  const toggleMenu = ()=>setExpanded(v=>!v);
+
   const submit = (e:React.FormEvent)=>{
     e.preventDefault();
     if(q.trim()) router.push(`/reunioes?q=${encodeURIComponent(q.trim())}`);
@@ -69,7 +68,7 @@ export default function HomePage(){
   return (
     <main className={styles.page}>
       <aside className={`${styles.sidebar} ${expanded ? styles.sidebarExpanded : ''}`}>
-        <button className={styles.expandToggle} onClick={()=>setExpanded(v=>!v)} aria-label={expanded?'Recolher menu':'Expandir menu'}>
+        <button type="button" className={styles.expandToggle} onClick={toggleMenu} aria-label={expanded?'Recolher menu':'Expandir menu'} aria-expanded={expanded}>
           {expanded?<ChevronLeft size={16}/>:<ChevronRight size={16}/>} 
         </button>
         <Link href="/profile" className={styles.avatar} aria-label="Perfil">
@@ -83,7 +82,9 @@ export default function HomePage(){
           ))}
         </nav>
         <div className={styles.sideBottom}>
-          <Link href="/login" className={styles.sideItem} title="Sair"><LogIn size={22} strokeWidth={1.55}/><span>Sair</span></Link>
+          <button type="button" className={styles.sideItem} onClick={toggleMenu} aria-label={expanded?'Recolher menu lateral':'Expandir menu lateral'} aria-expanded={expanded} title={expanded?'Recolher menu':'Expandir menu'}>
+            <Menu size={22} strokeWidth={1.55}/><span>{expanded?'Recolher menu':'Expandir menu'}</span>
+          </button>
         </div>
       </aside>
 
