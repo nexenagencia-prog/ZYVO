@@ -26,12 +26,23 @@ const hotspots=[
   {label:'Anotações',href:'/minhas-anotacoes',cls:'sideNotes'},
   {label:'Configurações',href:'/configuracoes',cls:'sideSettings'},
   {label:'Notificações',href:'/configuracoes',cls:'sideNotifications'},
-  {label:'Menu',href:'/configuracoes',cls:'sideMenu'},
+];
+
+const expandedMenu=[
+  {label:'Início',href:'/'},
+  {label:'Criar reunião',href:'/reuniao-instantanea'},
+  {label:'Agenda',href:'/agenda'},
+  {label:'Skills',href:'/skills'},
+  {label:'Contatos',href:'/contatos'},
+  {label:'Minhas anotações',href:'/minhas-anotacoes'},
+  {label:'Gravações',href:'/gravacoes'},
+  {label:'Configurações',href:'/configuracoes'},
 ];
 
 export default function HomePage(){
   const router=useRouter();
   const [query,setQuery]=useState('');
+  const [menuOpen,setMenuOpen]=useState(false);
 
   const submitSearch=(event:FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
@@ -75,6 +86,26 @@ export default function HomePage(){
             <span className={styles.srOnly}>{item.label}</span>
           </Link>
         ))}
+
+        <button
+          type="button"
+          className={`${styles.hotspot} ${styles.sideMenu}`}
+          aria-label={menuOpen?'Fechar menu':'Abrir menu'}
+          title={menuOpen?'Fechar menu':'Abrir menu'}
+          aria-expanded={menuOpen}
+          onClick={()=>setMenuOpen(value=>!value)}
+        >
+          <span className={styles.srOnly}>{menuOpen?'Fechar menu':'Abrir menu'}</span>
+        </button>
+
+        {menuOpen&&(
+          <aside className={styles.expandedMenu} aria-label="Menu principal">
+            <div className={styles.expandedMenuTitle}>ZYVO</div>
+            <nav>
+              {expandedMenu.map(item=><Link key={item.href+item.label} href={item.href} onClick={()=>setMenuOpen(false)}>{item.label}</Link>)}
+            </nav>
+          </aside>
+        )}
       </div>
     </main>
   );
