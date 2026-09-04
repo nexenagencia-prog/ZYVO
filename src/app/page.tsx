@@ -137,10 +137,10 @@ export default function HomePage(){
             <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar reuniões, pessoas ou gravações"/>
           </form>
           <nav className={styles.topnav}>
-            <Link href="/reunioes">Recursos</Link>
-            <Link href="/skills">Tecnologia</Link>
-            <Link href="/skills">Performance</Link>
-            <Link href="/profile">Sobre nós</Link>
+            <Link href="/">Início</Link>
+            <Link href="/skills">Skills</Link>
+            <Link href="/agenda">Agenda</Link>
+            <Link href="/planos">Planos e Preços</Link>
           </nav>
           <Link href="/login" className={styles.access}>Acessar <ArrowRight size={17}/></Link>
         </header>
@@ -158,7 +158,7 @@ export default function HomePage(){
             <div className={styles.quickRow}>
               {quickLinks.map(({label,href,icon:Icon})=>(
                 <Link key={label} href={href} className={styles.quickItem}>
-                  <Icon size={28} strokeWidth={1.35}/>
+                  <Icon size={24} strokeWidth={1.05}/>
                   <span>{label.split('\n').map((line,idx)=><span key={idx}>{line}</span>)}</span>
                 </Link>
               ))}
